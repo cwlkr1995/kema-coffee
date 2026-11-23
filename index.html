@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KEMA — кофейня</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#140D0A;--bg2:#1F130D;--cream:#F3DEC5;--car:#C88A55;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#0c0705;overflow:hidden;font-family:Manrope,system-ui,sans-serif;color:var(--cream);overscroll-behavior:none}
+#app{position:fixed;inset:0;margin:auto;width:min(100vw,calc(100dvh*.5625));height:100dvh;overflow:hidden;touch-action:none;background:radial-gradient(ellipse at 50% 40%,#33200f 0%,var(--bg2) 48%,var(--bg) 100%)}
+#c{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.ui{position:absolute;inset:0;pointer-events:none}
+.top{position:absolute;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 0;display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;gap:9px;align-items:center;font:700 19px 'Playfair Display',serif;letter-spacing:.3em}
+.brand svg{width:36px;height:36px;color:var(--cream)}
+.count{font-weight:600;font-size:12px;letter-spacing:.14em;text-align:right}.count b{color:var(--car);font-size:22px;font-family:'Playfair Display',serif}
+.count #sl{color:var(--car);font-size:10px;letter-spacing:.22em;text-transform:uppercase}
+.prog{position:absolute;top:calc(env(safe-area-inset-top,0px) + 62px);left:18px;right:18px;height:2px;background:rgba(243,222,197,.14)}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--car),var(--cream))}
+.cap{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 92px);text-align:center;padding:0 26px;transition:opacity .45s,transform .45s}
+.cap.sw{opacity:0;transform:translateY(10px)}.cap.hide{opacity:0;pointer-events:none}
+.cap h2{font:italic 600 25px/1.28 'Playfair Display',serif;margin:0;text-shadow:0 2px 22px #000}
+.cap p{margin:9px 0 0;font-size:11px;letter-spacing:.32em;color:var(--car);font-weight:700}
+.cap small{display:block;margin-top:12px;color:var(--car);font-weight:700;font-size:11px;letter-spacing:.22em;text-transform:uppercase;animation:pl 1.6s infinite}
+@keyframes pl{50%{opacity:.35;transform:translateY(4px)}}
+.bar{position:absolute;left:0;right:0;bottom:0;padding:0 16px calc(env(safe-area-inset-bottom,0px) + 16px);display:flex;gap:10px;pointer-events:auto}
+.bar button{flex:1;height:52px;border-radius:26px;border:1px solid rgba(243,222,197,.22);background:rgba(243,222,197,.08);color:var(--cream);font:700 14px Manrope,sans-serif;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.bar button.a{flex:1.5;background:linear-gradient(135deg,#d99a60,#b3753f);color:#1a0e08;border:0}
+.bar button:active{transform:scale(.97)}
+.card{position:absolute;left:14px;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 82px);padding:16px;border-radius:24px;background:rgba(31,19,13,.84);border:1px solid rgba(200,138,85,.5);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transform:translateY(130%);opacity:0;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .6s;pointer-events:none}
+.card.show{transform:none;opacity:1;pointer-events:auto}
+.card h3{margin:0 0 10px;font:700 17px 'Playfair Display',serif;letter-spacing:.2em;display:flex;justify-content:space-between;align-items:baseline}
+.card h3 span{font:600 11px Manrope,sans-serif;letter-spacing:.1em;color:var(--car)}
+.hit{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid rgba(243,222,197,.12);font-size:15px}
+.hit em{font-style:normal;color:var(--car);font-weight:700}
+.wa{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;height:56px;border-radius:28px;background:linear-gradient(135deg,#e3a468,#c0793f);color:#1a0e08;font:700 17px Manrope,sans-serif;text-decoration:none;box-shadow:0 8px 30px rgba(200,138,85,.35)}
+.wa svg{width:24px;height:24px}
+</style></head><body>
+<div id="app">
+<canvas id="c"></canvas>
+<div class="ui">
+ <div class="top"><div class="brand"><svg id="lg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></svg>KEMA</div>
+ <div class="count"><b id="n">01</b> / 05<br><span id="sl"></span></div></div>
+ <div class="prog"><i id="pg"></i></div>
+ <div class="cap" id="cap"><h2 id="ct"></h2><p id="cp">— KEMA</p><small id="hint">Свайп вниз ↓</small></div>
+ <div class="card" id="card">
+  <h3>KEMA <span>ХИТЫ КОФЕЙНИ</span></h3>
+  <div class="hit">KEMA Латте <em>1 600 ₸</em></div>
+  <div class="hit">Раф Ваниль-Карамель <em>1 900 ₸</em></div>
+  <div class="hit">Двойной Эспрессо <em>1 200 ₸</em></div>
+  <a class="wa" href="https://wa.me/77000000000?text=Привет!%20Хочу%20сделать%20заказ%20в%20кофейне%20KEMA" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.300 1.200-1.800 1.200-.5.100-1 .2-3.300-.7-2.800-1.100-4.600-4-4.800-4.200-.1-.2-1.100-1.500-1.100-2.800s.7-2 1-2.300c.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.200.1.300 0 .5l-.4.500c-.1.200-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.100 1 2 1.300 2.300 1.400.3.100.4.100.6-.1l.8-1c.2-.3.400-.2.600-.1l1.900.9c.3.100.5.200.5.300.1.100.1.700-.100 1.200z"/></svg>Заказать в WhatsApp</a>
+ </div>
+ <div class="bar"><button id="bp">↑ Назад</button><button id="ba" class="a">▶ Авто</button><button id="bn">Дальше ↓</button></div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script>
+const V=THREE,$=s=>document.querySelector(s);
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),sm=x=>{x=cl(x);return x*x*(3-2*x)},lp=(a,b,t)=>a+(b-a)*t,rnd=(a,b)=>a+Math.random()*(b-a);
+const LOGO=['M36 32c-6-6 6-9 0-16','M47 32c-6-6 6-10 0-18','M58 32c-6-6 6-9 0-16','M22 40h50v18a25 25 0 0 1-50 0z','M72 46h5a8.5 8.5 0 0 1 0 17h-5','M16 90h62','M41 49v22M41 61l15-12M44.5 59l12 12'];
+$('#lg').innerHTML=LOGO.map(d=>`<path d="${d}"/>`).join('');
+const mk=(w,h,fn)=>{const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new V.CanvasTexture(c);t.wrapS=t.wrapT=V.RepeatWrapping;t.anisotropy=4;return t};
+const app=$('#app'),R=new V.WebGLRenderer({canvas:$('#c'),antialias:true,alpha:true});
+R.setPixelRatio(Math.min(devicePixelRatio||1,2));R.localClippingEnabled=true;R.toneMapping=V.ACESFilmicToneMapping;R.toneMappingExposure=1.2;
+R.shadowMap.enabled=true;R.shadowMap.type=V.PCFSoftShadowMap;
+const S=new V.Scene(),cam=new V.PerspectiveCamera(38,.56,.1,60);let dist=10,HW=1.6;
+/* studio environment: softboxes for reflections */
+{const pm=new V.PMREMGenerator(R),es=new V.Scene();es.background=new V.Color(0x120a06);
+const sb=(w,h,x,y,z,c,i)=>{const m=new V.Mesh(new V.PlaneGeometry(w,h),new V.MeshBasicMaterial({color:new V.Color(c).multiplyScalar(i),side:V.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);es.add(m)};
+sb(7,4,4,6,5,0xffe2c2,6);sb(3,7,-7,2,2,0xffa860,4);sb(9,2,0,7,-4,0xffe0c0,3);sb(5,3,2,-4,5,0xa66838,1.4);sb(2,6,7,0,-2,0xffd8a8,3);
+S.environment=pm.fromScene(es,.03).texture}
+S.add(new V.HemisphereLight(0xffe2c0,0x1a0d07,.25));
+const key=new V.DirectionalLight(0xffe2c2,1.5);key.position.set(3,6,6);key.castShadow=true;key.shadow.mapSize.set(2048,2048);
+Object.assign(key.shadow.camera,{left:-6,right:6,top:7,bottom:-7,near:1,far:25});key.shadow.bias=-.0005;key.shadow.normalBias=.03;S.add(key);
+const rim2=new V.DirectionalLight(0xffa860,1.5);rim2.position.set(-5,3,-6);S.add(rim2);
+const rim=new V.PointLight(0xc88a55,1.6,25);rim.position.set(-5,3,-3);S.add(rim);
+const mat=(c,r=.5,m=0,o={})=>new V.MeshStandardMaterial(Object.assign({color:c,roughness:r,metalness:m},o));
+const M=(g,m,x,y,z,p)=>{const o=new V.Mesh(g,m);o.position.set(x,y,z);p&&p.add(o);return o};
+const spr=mk(64,64,x=>{const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,64,64)});
+/* procedural bump maps: brushed scratches, pores, glaze speckle */
+const scr=mk(512,512,(x,w,h)=>{x.fillStyle='#808080';x.fillRect(0,0,w,h);for(let i=0;i<1600;i++){const v=Math.random()<.5?255:0,y=rnd(0,h),x0=rnd(0,w);x.strokeStyle=`rgba(${v},${v},${v},${rnd(.03,.1)})`;x.lineWidth=rnd(.5,1.2);x.beginPath();x.moveTo(x0,y);x.lineTo(x0+rnd(20,160),y+rnd(-2,2));x.stroke()}
+for(let i=0;i<40;i++){x.strokeStyle=`rgba(255,255,255,${rnd(.15,.3)})`;x.lineWidth=.8;x.beginPath();const a=rnd(0,w),b=rnd(0,h);x.moveTo(a,b);x.lineTo(a+rnd(-60,60),b+rnd(-60,60));x.stroke()}});
+const pores=mk(256,256,(x,w,h)=>{x.fillStyle='#909090';x.fillRect(0,0,w,h);for(let i=0;i<900;i++){x.fillStyle=`rgba(0,0,0,${rnd(.15,.5)})`;x.beginPath();x.arc(rnd(0,w),rnd(0,h),rnd(.6,2.4),0,6.3);x.fill()}for(let i=0;i<500;i++){x.fillStyle=`rgba(255,255,255,${rnd(.05,.2)})`;x.fillRect(rnd(0,w),rnd(0,h),rnd(1,4),1)}});
+const glz=mk(256,256,(x,w,h)=>{x.fillStyle='#808080';x.fillRect(0,0,w,h);for(let i=0;i<4000;i++){const v=Math.random()<.5?255:0;x.fillStyle=`rgba(${v},${v},${v},${rnd(.04,.14)})`;x.fillRect(rnd(0,w),rnd(0,h),1.5,1.5)}});
+/* ---------- coffee bean (medium roast) ---------- */
+const nz=(x,y,z)=>Math.sin(x*11+y*7.3+1.3)*Math.sin(y*9.1-z*8.2+.7)+.6*Math.sin(z*13.7+x*5.1)*Math.sin(x*12.3+y*4.4);
+const hx=h=>[(h>>16&255)/255,(h>>8&255)/255,(h&255)/255],CB=hx(0x6E3F24),CH=hx(0xA66838),CA=hx(0xC98A42),CD=hx(0x261309),mx=(a,b,t)=>[lp(a[0],b[0],t),lp(a[1],b[1],t),lp(a[2],b[2],t)];
+function beanGeo(){const g=new V.SphereGeometry(1,96,72);g.rotateY(-Math.PI/2);const p=g.attributes.position,col=new Float32Array(p.count*3);
+for(let i=0;i<p.count;i++){const ux=p.getX(i),uy=p.getY(i),uz=p.getZ(i);let x=ux*.64*(1+.06*uy),y=uy*.92*(1+.04*ux),z=uz*.5*(uz>0?.78:1);
+x+=.04*Math.sin(y*2.1+1);const xc=.09*Math.sin(y*3.4),dx=x-xc,edge=Math.pow(Math.max(0,1-y*y/.8),1.3);let w=0,a=0;
+if(uz>0){w=Math.exp(-dx*dx/(.0045*(.4+.6*edge)))*edge;a=Math.exp(-dx*dx/.0007)*edge;z-=.22*w;z+=.03*Math.exp(-Math.pow(Math.abs(dx)-.12,2)/.0025)*edge}
+const wr=.011*nz(ux,uy,uz);z+=wr*(uz>0?1:.6);x+=wr*.5;x+=.14*y*y;z-=.07*y*y;p.setXYZ(i,x,y,z);
+const t=cl(.3+.3*nz(ux*2,uy*2,uz*2)+.4*(1-Math.abs(ux))*(uz>0?.7:1));let c=mx(CB,CH,t);c=mx(c,CD,cl(w*1.25-a));c=mx(c,CA,a*.9);const m=1+.08*nz(ux*1.7,uy*1.7,uz*1.7);
+col[i*3]=c[0]*m;col[i*3+1]=c[1]*m;col[i*3+2]=c[2]*m}
+g.setAttribute('color',new V.BufferAttribute(col,3));g.computeVertexNormals();return g}
+const BG=beanGeo(),bm=[0xffffff,0xf2e6da,0xe6d4c0].map((c,i)=>new V.MeshStandardMaterial({color:c,roughness:.42+i*.04,metalness:.05,vertexColors:true,bumpMap:pores,bumpScale:1.4,envMapIntensity:.9}));
+bm.forEach(m=>pores.repeat.set(2,2));
+const LAY=[{z:-1.9,sp:1,s:.36},{z:-3,sp:.7,s:.38},{z:-4.1,sp:.5,s:.4}],side=[];
+LAY.forEach((L,li)=>[-1,1].forEach(sx=>{for(let k=0;k<4;k++){const m=new V.Mesh(BG,bm[(li+k)%3]);m.userData={L,sx,y0:-5.6+k*2.8+rnd(-.3,.3),fx:rnd(.88,1.05),r:[rnd(0,6),rnd(0,6),rnd(0,6)],rs:rnd(.3,1),k:[rnd(.92,1.08),rnd(.96,1.04),rnd(.92,1.08)]};S.add(m);side.push(m)}}));
+function relax(n,d,rmax,y0,y1){const a=[];for(let i=0;i<n;i++){const t=rnd(0,6.28),r=rnd(.1,rmax);a.push([Math.cos(t)*r,rnd(y0,y1),Math.sin(t)*r])}
+for(let it=0;it<800;it++){for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const A=a[i],B=a[j],dx=A[0]-B[0],dy=A[1]-B[1],dz=A[2]-B[2],e=Math.hypot(dx,dy,dz)||.001;if(e<d){const k=(d-e)/2/e;A[0]+=dx*k;A[1]+=dy*k;A[2]+=dz*k;B[0]-=dx*k;B[1]-=dy*k;B[2]-=dz*k}}
+a.forEach(A=>{const r=Math.hypot(A[0],A[2]);if(r>rmax){A[0]*=rmax/r;A[2]*=rmax/r}A[1]=cl(A[1],y0,y1)})}return a}
+const NB=7,cp=relax(NB,1.02,.85,-1.3,1.3).sort((a,b)=>a[1]-b[1]);let orb=0;
+const beans=cp.map((q,i)=>{const m=new V.Mesh(BG,bm[i%3]);m.userData={s:rnd(.42,.5),a:Math.atan2(q[2],q[0]),r:Math.hypot(q[0],q[2]),y:q[1],w:i/NB*.65,rx:rnd(.6,1.4),ry:rnd(.6,1.4),k:[rnd(.92,1.08),rnd(.96,1.04),rnd(.92,1.08)]};S.add(m);return m});
+/* ---------- atmosphere ---------- */
+function pts(n,o){const a=new Float32Array(n*3),g=new V.BufferGeometry();g.setAttribute('position',new V.BufferAttribute(a,3));const p=new V.Points(g,new V.PointsMaterial(Object.assign({map:spr,transparent:true,depthWrite:false},o)));p.frustumCulled=false;p.userData={n,a,g};return p}
+const bk=[[46,.12,40],[22,.18,50]].map(([sz,op,n])=>{const p=pts(n,{size:sz,sizeAttenuation:false,color:0xc88a55,opacity:op,blending:V.AdditiveBlending});p.userData.s=Array.from({length:n},()=>[rnd(-1.2,1.2),rnd(-5,5),rnd(-9,-4),rnd(.3,1)]);S.add(p);return p});
+function mkSteam(n,sz,col){const p=pts(n,{size:sz,vertexColors:true,blending:V.AdditiveBlending});p.userData.c=new Float32Array(n*3);p.geometry.setAttribute('color',new V.BufferAttribute(p.userData.c,3));p.userData.s=Array.from({length:n},()=>[Math.random(),rnd(-1,1),rnd(-1,1)]);p.userData.col=new V.Color(col);return p}
+function stUpd(p,t,amt,h,w){const u=p.userData;for(let i=0;i<u.n;i++){const q=u.s[i],l=(t*.22+q[0])%1;u.a[i*3]=q[1]*w*(.3+l)+Math.sin(t*2+i)*.06*l;u.a[i*3+1]=l*h;u.a[i*3+2]=q[2]*w*(.3+l);const k=amt*Math.sin(l*Math.PI)*.3;u.c[i*3]=u.col.r*k;u.c[i*3+1]=u.col.g*k;u.c[i*3+2]=u.col.b*k}u.g.attributes.position.needsUpdate=u.g.attributes.color.needsUpdate=true}
+/* ---------- materials: graphite, bronze, stainless ---------- */
+const graphite=mat(0x2a2522,.55,.65,{bumpMap:scr,bumpScale:.5}),dark=mat(0x2b1f1a,.38,.85,{bumpMap:scr,bumpScale:.5}),bronze=mat(0xA66838,.35,.85,{bumpMap:scr,bumpScale:.3}),steel=mat(0xcfc8bc,.3,.9,{bumpMap:scr,bumpScale:.3}),walnut=mat(0x3a2315,.5,0,{bumpMap:pores,bumpScale:.8}),creamM=mat(0xf3dec5,.4,.2);
+const glass=new V.MeshPhysicalMaterial({color:0x4a2d1a,roughness:.08,transparent:true,opacity:.3,side:V.DoubleSide,depthWrite:false,clearcoat:1,clearcoatRoughness:.05,envMapIntensity:1.6});
+const lathe=(a,s=56,p0,pl)=>new V.LatheGeometry(a.map(p=>new V.Vector2(p[0],p[1])),s,p0,pl),sc=a=>new V.SplineCurve(a.map(p=>new V.Vector2(p[0],p[1]))).getPoints(36);
+/* ---------- grinder ---------- */
+const gG=new V.Group();S.add(gG);
+M(lathe([[0,-2.2],[1.35,-2.2],[1.4,-2.12],[1.36,-2],[1.15,-1.92],[0,-1.92]]),graphite,0,0,0,gG);M(new V.TorusGeometry(1.37,.03,8,56),bronze,0,-2,0,gG).rotation.x=Math.PI/2;
+M(lathe([[.9,-.45],[1.1,-.35],[1.12,-.1],[1.02,.2],[.8,.38],[.64,.45]]),graphite,0,0,0,gG);
+for(let i=0;i<60;i++){const a=i/60*6.283;M(new V.BoxGeometry(.05,.3,.05),steel,Math.cos(a)*1.14,-.12,Math.sin(a)*1.14,gG).rotation.y=-a}
+[.08,-.34].forEach(y=>M(new V.TorusGeometry(1.12,.03,8,56),bronze,0,y,0,gG).rotation.x=Math.PI/2);
+for(let i=0;i<36;i++){const a=i/36*6.283,l=i%5?.05:.09;M(new V.BoxGeometry(.025,l,.02),bronze,Math.cos(a)*1.0,.2,Math.sin(a)*1.0,gG).rotation.y=-a}
+M(new V.TorusGeometry(1.26,.045,12,56),steel,0,1.9,0,gG).rotation.x=Math.PI/2;
+M(lathe([[1.25,1.9],[1.1,1.4],[.85,.9],[.66,.5]]),glass,0,0,0,gG);
+const fun=M(lathe([[.66,.8],[.3,.6]]),graphite,0,0,0,gG);fun.material=graphite.clone();fun.material.side=V.DoubleSide;
+M(lathe([[.88,-.45],[.9,-1.2],[.9,-1.9]]),glass,0,0,0,gG);
+const burr=new V.Group();burr.position.y=.45;gG.add(burr);
+M(new V.CylinderGeometry(.55,.55,.08,48),graphite,0,0,0,burr);M(new V.ConeGeometry(.18,.3,24),bronze,0,.16,0,burr);
+for(let i=0;i<26;i++){const a=i/26*6.283;M(new V.ConeGeometry(.045,.14,8),steel,Math.cos(a)*.4,.08,Math.sin(a)*.4,burr)}
+const wheel=M(new V.CylinderGeometry(.26,.26,.1,32),bronze,1.2,0,.1,gG);wheel.rotation.z=Math.PI/2;
+for(let i=0;i<12;i++){const a=i/12*6.283;M(new V.BoxGeometry(.12,.04,.04),graphite,1.24,Math.cos(a)*.26,Math.sin(a)*.26+.1,gG).rotation.x=a}
+const stat=relax(6,.58,.75,.95,1.2).map(q=>{const m=new V.Mesh(BG,bm[0]);m.position.set(q[0],q[1],q[2]);m.rotation.set(rnd(0,6),rnd(0,6),rnd(0,6));m.userData.s=.28;gG.add(m);return m});
+const mg=new V.SphereGeometry(.85,48,24);for(let i=0;i<mg.attributes.position.count;i++){const p=mg.attributes.position,k=1+rnd(-.05,.05);p.setXYZ(i,p.getX(i)*k,p.getY(i)*k,p.getZ(i)*k)}mg.computeVertexNormals();
+const mound=M(mg,mat(0x2b160c,1,0,{bumpMap:pores,bumpScale:2}),0,-1.7,0,gG);
+const NPC=900,cloud=pts(NPC,{size:.09,color:0x4a2812,opacity:0});gG.add(cloud);cloud.userData.s=Array.from({length:NPC},()=>[Math.random(),rnd(0,6.28),rnd(.2,1)]);
+/* ---------- espresso machine ---------- */
+const rr=(w,h,r)=>{const s=new V.Shape(),x=-w/2,y=-h/2;s.moveTo(x+r,y);s.lineTo(x+w-r,y);s.quadraticCurveTo(x+w,y,x+w,y+r);s.lineTo(x+w,y+h-r);s.quadraticCurveTo(x+w,y+h,x+w-r,y+h);s.lineTo(x+r,y+h);s.quadraticCurveTo(x,y+h,x,y+h-r);s.lineTo(x,y+r);s.quadraticCurveTo(x,y,x+r,y);return s};
+const rb=(w,h,d,r,b=.06)=>{const g=new V.ExtrudeGeometry(rr(w,h,r),{depth:d,bevelEnabled:true,bevelThickness:b,bevelSize:b,bevelSegments:4,curveSegments:12});g.translate(0,0,-d/2);return g};
+const gM=new V.Group();S.add(gM);
+M(rb(2.3,2.9,.9,.42),dark,0,1.45,-.55,gM);M(rb(2.5,.3,1.05,.14),steel,0,3,-.55,gM);
+[.45,2.5].forEach(y=>M(rb(2.36,.07,.95,.03),bronze,0,y,-.55,gM));
+M(rb(2.1,2.9,.5,.15),dark,0,-1.5,-.75,gM);
+M(rb(2.9,.2,2.6,.08),dark,0,-2.9,.5,gM);M(rb(2.6,.04,2.2,.02),steel,0,-2.77,.5,gM);
+for(let i=0;i<13;i++)M(new V.BoxGeometry(.05,.05,2),graphite,-1.2+i*.2,-2.74,.5,gM);
+M(rb(1.1,.6,1.1,.22),dark,0,.1,.38,gM);
+M(lathe([[0,.27],[.52,.27],[.62,.15],[.64,-.05],[.58,-.22],[0,-.22]],48),steel,0,0,.9,gM);
+M(lathe([[0,-.2],[.5,-.2],[.5,-.38],[.42,-.46],[0,-.46]],48),steel,0,0,.9,gM);
+[-.13,.13].forEach(x=>M(new V.CylinderGeometry(.075,.04,.2,20),steel,x,-.56,.9,gM));
+const hg=new V.Group();hg.position.set(0,-.3,.9);hg.rotation.y=.9;gM.add(hg);
+M(new V.CylinderGeometry(.06,.06,.4,16),steel,0,0,.35,hg).rotation.x=Math.PI/2;
+M(lathe([[0,0],[.09,0],[.13,.15],[.14,.7],[.1,.95],[0,1]],24),walnut,0,0,.5,hg).rotation.x=Math.PI/2;
+const ring=M(new V.TorusGeometry(.56,.025,8,48),mat(0x331100,.3,0,{emissive:0xff8a2a,emissiveIntensity:1}),0,-.22,.9,gM);ring.rotation.x=Math.PI/2;
+M(new V.TorusGeometry(.42,.06,16,48),bronze,0,2.05,-.04,gM);M(new V.CircleGeometry(.4,48),mat(0xf6ead6,.5),0,2.05,-.03,gM);
+for(let i=0;i<9;i++){const a=2.2-i*.45;M(new V.BoxGeometry(.02,.07,.005),graphite,Math.sin(-a)*.32,Math.cos(a)*.32+2.05,-.025,gM).rotation.z=a}
+const needle=new V.Group();needle.position.set(0,2.05,-.01);gM.add(needle);M(new V.BoxGeometry(.025,.32,.01),mat(0xb03a1a,.4),0,.14,0,needle);M(new V.SphereGeometry(.04,12,8),bronze,0,0,0,needle);
+M(new V.CircleGeometry(.4,48),new V.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.12,roughness:0,clearcoat:1}),0,2.05,.02,gM);
+const lamp=M(new V.SphereGeometry(.09,16,12),mat(0x331100,.3,0,{emissive:0xff8a2a,emissiveIntensity:1.5}),.8,2.1,0,gM);
+[-.8,.8].forEach(x=>{M(new V.CylinderGeometry(.19,.23,.16,32),bronze,x,1.25,0,gM).rotation.x=Math.PI/2;M(new V.BoxGeometry(.04,.16,.03),graphite,x,1.25,.09,gM)});
+M(new V.PlaneGeometry(1.1,.28),new V.MeshBasicMaterial({map:mk(256,64,(x,w,h)=>{x.fillStyle='#1c120d';x.fillRect(0,0,w,h);x.fillStyle='#d9b48a';x.font='700 38px Georgia,serif';x.textAlign='center';x.fillText('K E M A',w/2,46)})}),0,.8,-.02,gM);
+M(new V.TubeGeometry(new V.CatmullRomCurve3([new V.Vector3(1.3,1.8,-.3),new V.Vector3(1.45,1,-.1),new V.Vector3(1.4,.1,.15),new V.Vector3(1.2,-.5,.35)]),30,.045,10),steel,0,0,0,gM);
+const wand=mkSteam(60,.28,0xffe8cc);wand.position.set(1.2,-.5,.35);gM.add(wand);
+/* ---------- ceramic cup ---------- */
+const cup=new V.Group();S.add(cup);
+const cer=new V.MeshPhysicalMaterial({color:0xf3dec5,roughness:.42,clearcoat:.3,clearcoatRoughness:.5,side:V.DoubleSide,bumpMap:glz,bumpScale:.6,envMapIntensity:.8});
+const outer=sc([[0,0],[.4,0],[.55,.03],[.68,.14],[.8,.42],[.9,.8],[.97,1.15],[.98,1.22]]),inner=sc([[.84,1.17],[.78,.8],[.64,.42],[.5,.22],[.38,.17],[0,.15]]);
+const prof=outer.concat([new V.Vector2(.97,1.26),new V.Vector2(.93,1.285),new V.Vector2(.88,1.265),new V.Vector2(.86,1.22)],inner);
+cup.add(new V.Mesh(new V.LatheGeometry(prof,64),cer));
+cup.add(new V.Mesh(new V.TubeGeometry(new V.CatmullRomCurve3([[.9,1.02,0],[1.28,1.02,0],[1.45,.72,0],[1.28,.4,0],[.85,.32,0]].map(p=>new V.Vector3(...p))),40,.07,12),cer));
+cup.add(new V.Mesh(new V.LatheGeometry(sc([[0,0],[.75,0],[1.05,.03],[1.35,.11],[1.46,.19],[1.44,.21],[1.3,.16],[.95,.09],[.8,.08],[0,.08]]),64),cer)).position.y=-.07;
+const IN=[[.17,0],[.18,.36],[.24,.48],[.42,.62],[.8,.77],[1.15,.83]],ir=y=>{for(let i=1;i<IN.length;i++)if(y<=IN[i][0]){const a=IN[i-1],b=IN[i];return lp(a[1],b[1],(y-a[0])/(b[0]-a[0]))}return .83};
+const plane=new V.Plane(new V.Vector3(0,-1,0),0);
+const liqM=new V.MeshPhysicalMaterial({color:0x1a0b05,roughness:.15,clearcoat:1,side:V.DoubleSide,clippingPlanes:[plane]});
+cup.add(new V.Mesh(lathe(IN.map(p=>[p[1],p[0]]).concat([[0,1.15]]),64),liqM));
+const foamT=mk(512,512,x=>{const g=x.createRadialGradient(256,256,10,256,256,256);g.addColorStop(0,'#f8ead4');g.addColorStop(.7,'#ecd5b2');g.addColorStop(1,'#c99a66');x.fillStyle=g;x.fillRect(0,0,512,512)});
+const swirlT=mk(512,512,x=>{x.lineCap='round';[[14,.1],[9,.18],[5,.7]].forEach(([w,al])=>{x.strokeStyle=`rgba(247,239,228,${al})`;x.lineWidth=w;for(let k=0;k<3;k++){x.beginPath();for(let a=0;a<12;a+=.1){const r=18*a+6,th=a+k*2.094;x[a?'lineTo':'moveTo'](256+Math.cos(th)*r,256+Math.sin(th)*r)}x.stroke()}})});
+swirlT.center.set(.5,.5);
+const logoT=mk(512,512,x=>{[[10,.1],[7,.2],[4.2,1]].forEach(([w,al])=>{x.save();x.globalAlpha=al;x.translate(62,20);x.scale(3.8,3.8);x.strokeStyle='#6a3419';x.lineWidth=w;x.lineCap=x.lineJoin='round';LOGO.forEach(d=>x.stroke(new Path2D(d)));x.restore()});x.fillStyle='#6a3419';x.font='700 66px Georgia,serif';x.textAlign='center';x.fillText('K E M A',256,452)});
+const disc=new V.Mesh(new V.CircleGeometry(1,48),new V.MeshPhysicalMaterial({map:foamT,color:0x8c4a20,roughness:.3,clearcoat:.5}));disc.rotation.x=-Math.PI/2;cup.add(disc);
+const swirl=new V.Mesh(new V.CircleGeometry(1,48),new V.MeshBasicMaterial({map:swirlT,transparent:true,opacity:0,depthWrite:false}));swirl.rotation.x=-Math.PI/2;cup.add(swirl);
+const men=new V.Mesh(new V.TorusGeometry(1,.035,8,48),new V.MeshPhysicalMaterial({color:0x1a0b05,roughness:.2,clearcoat:1}));men.rotation.x=Math.PI/2;cup.add(men);
+const foam=new V.Mesh(lathe([[0,.09],[.3,.085],[.6,.07],[.85,.045],[.98,.015],[1,0],[.98,-.06],[0,-.06]],48),new V.MeshStandardMaterial({color:0xf5e6d3,roughness:.75,transparent:true,bumpMap:pores,bumpScale:.3}));cup.add(foam);
+const logo=new V.Mesh(new V.PlaneGeometry(1.3,1.3),new V.MeshBasicMaterial({map:logoT,transparent:true,depthWrite:false}));logo.rotation.x=-Math.PI/2;cup.add(logo);
+const rips=[0,1].map(()=>{const r=new V.Mesh(new V.RingGeometry(.9,1,40),new V.MeshBasicMaterial({color:0xf3dec5,transparent:true,opacity:0,depthWrite:false,side:V.DoubleSide}));r.rotation.x=-Math.PI/2;cup.add(r);return r});
+const bub=pts(16,{size:.07,color:0xc68b49,opacity:.85});cup.add(bub);
+const decal=new V.Mesh(new V.LatheGeometry(outer.filter(p=>p.y>.32&&p.y<1.06).map(p=>new V.Vector2(p.x*1.008,p.y)),24,-.45,.9),new V.MeshStandardMaterial({map:logoT,transparent:true,opacity:0,roughness:.4,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3}));cup.add(decal);
+const cupSteam=mkSteam(70,.4,0xfff0dc);cup.add(cupSteam);
+/* streams: double espresso jets + milk */
+const jetM=new V.MeshPhysicalMaterial({color:0x3a1a08,roughness:.1,clearcoat:1,emissive:0x2a1004}),jets=[0,1].map(()=>{const m=new V.Mesh(new V.CylinderGeometry(.03,.026,1,12),jetM);S.add(m);return m});
+const milkM=new V.MeshStandardMaterial({color:0xf7efe4,roughness:.25,emissive:0x4a4236}),milk=new V.Mesh(new V.CylinderGeometry(.06,.05,1,14),milkM);S.add(milk);
+/* shadows */
+S.traverse(o=>{if(o.isMesh&&!o.material.transparent){o.castShadow=o.receiveShadow=true}});side.forEach(m=>m.castShadow=m.receiveShadow=false);
+/* ---------- state / ui ---------- */
+const STG=[["Зёрна", "«Утро начинается не с будильника, а с аромата кофе.»"], ["Помол", "«Свежий помол — лучший способ проснуться и улыбнуться.»"], ["Кофемашина", "«Хорошая чашка превращает обычный день в маленький праздник.»"], ["Эспрессо", "«Один глоток — и мир вокруг становится теплее.»"], ["Молоко и сливки", "«Пусть сегодня будет вкусно, тепло и по-настоящему уютно.»"]];
+const MK=[.08,.3,.55,.78,1];
+let T=0,P=0,t=0,intro=0,auto=false,yu=0,pu=0,drag=false,lx=0,ly=0,cur=-1,last=0;
+function setStage(i){cur=i;const c=$('#cap');c.classList.add('sw');setTimeout(()=>{$('#ct').textContent=STG[i][1];$('#sl').textContent=STG[i][0];c.classList.remove('sw')},260);$('#n').textContent='0'+(i+1)}
+function rs(){const w=app.clientWidth,h=app.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;const th=Math.tan(cam.fov*Math.PI/360);dist=Math.max(8,3.2/(2*th*cam.aspect));HW=dist*th*cam.aspect;cam.updateProjectionMatrix()}
+addEventListener('resize',rs);rs();
+const cv=$('#c');
+cv.addEventListener('pointerdown',e=>{drag=true;auto=false;sa();lx=e.clientX;ly=e.clientY;cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;T=cl(T+dy/(app.clientHeight*.85));yu=cl(yu+dx*.006,-.8,.8);pu=cl(pu+dy*.0015,-.3,.3)});
+['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>drag=false));
+cv.addEventListener('wheel',e=>{e.preventDefault();auto=false;sa();T=cl(T+e.deltaY/1800)},{passive:false});
+addEventListener('keydown',e=>{if(e.key==='ArrowDown')go(1);if(e.key==='ArrowUp')go(-1)});
+function go(d){auto=false;sa();T=d>0?(MK.find(m=>m>T+.02)||1):([...MK].reverse().find(m=>m<T-.02)||0)}
+function sa(){$('#ba').textContent=auto?'❚❚ Пауза':'▶ Авто'}
+$('#bn').onclick=()=>go(1);$('#bp').onclick=()=>go(-1);
+$('#ba').onclick=()=>{if(T>=.99){T=P=0;intro=0}auto=!auto;sa()};
+const mix=(a,b,k)=>new V.Color(a).lerp(new V.Color(b),k);
+function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-last)/1000||.016);last=now;t+=dt;
+if(auto){T=Math.min(1,T+dt/22);if(T>=1){auto=false;sa()}}
+P+=(T-P)*(1-Math.exp(-dt*5));intro=Math.min(1,intro+dt/1.6);const vel=T-P,ei=sm(intro);
+bk.forEach((p,k)=>{const u=p.userData;for(let i=0;i<u.n;i++){const s=u.s[i];u.a[i*3]=s[0]*HW*1.6;u.a[i*3+1]=((s[1]+t*.15*s[3]*(k+1)+P*3*s[3]+5)%10+10)%10-5;u.a[i*3+2]=s[2]}u.g.attributes.position.needsUpdate=true});
+const c=cl((P-.2)/.2);orb+=dt*(.5+c*1.5);
+side.forEach(m=>{const u=m.userData,L=u.L,f=(dist-L.z)/dist;const y=((u.y0-P*L.sp*9-t*.1*L.sp+5.6)%11.2+11.2)%11.2-5.6;
+m.position.set(u.sx*u.fx*HW*f+Math.sin(t*.8+u.y0)*.06,y,L.z);const s=L.s*f*ei;m.scale.set(s*u.k[0],s*u.k[1],s*u.k[2]);m.rotation.set(u.r[0]+P*L.sp*4+t*.4*u.rs,u.r[1]+t*.5*u.rs+P*3,u.r[2]+P*2)});
+const yc=lp(.6,1.85,sm((P-.1)/.1)),mouth=-.17;
+beans.forEach((b,i)=>{const u=b.userData,q=cl((c-u.w)/.3),a=u.a+orb,p1=sm(q*2),p2=sm((q-.5)*2);
+const ox=Math.cos(a)*u.r,oy=yc+u.y-(1-ei)*1.5+Math.sin(t*1.2+i)*.06,oz=Math.sin(a)*u.r;
+let y=lp(oy,mouth+.7,p1);if(q>.5)y=lp(mouth+.7,mouth-.27,p2);b.position.set(lp(ox,0,p1),y,lp(oz,0,p1));
+const s=u.s*ei*(1-.5*p2)*(1-sm((p2-.8)/.2));b.scale.set(Math.max(s*u.k[0],1e-4),Math.max(s*u.k[1],1e-4),Math.max(s*u.k[2],1e-4));b.visible=s>.003;
+b.rotation.x+=dt*u.rx*(1+c*6);b.rotation.y+=dt*u.ry*(1+c*6)});
+/* grinder */
+const ga=sm((P-.12)/.08),gx=sm((P-.38)/.12);gG.visible=ga>.01&&gx<.99;gG.scale.setScalar(.75*(1-.3*gx));gG.position.set(-4.2*gx,lp(-4.8,-1.6,ga),0);
+if(gG.visible){burr.rotation.y+=dt*(2+25*c);wheel.rotation.x-=dt*(1+10*c);const mv=sm((c-.25)/.75);mound.scale.set(1,.1+mv*.9,1);mound.position.y=-1.75+mv*.15;
+stat.forEach((b,i)=>{const d=sm((c-.3-i*.07)/.35),s=b.userData.s*(1-d)*ei;b.scale.setScalar(Math.max(s,1e-4));b.visible=s>.004});
+const po=sm((c-.1)/.2);cloud.material.opacity=po*.9;const u=cloud.userData;
+for(let i=0;i<NPC;i++){const q=u.s[i],l=(t*.7+q[0])%1,a=q[1]+t*2,r=.03+(l<.6?.06:.5)*l*q[2];u.a[i*3]=Math.cos(a)*r;u.a[i*3+1]=-.45-l*1.15;u.a[i*3+2]=Math.sin(a)*r}u.g.attributes.position.needsUpdate=true}
+/* machine */
+const me=sm((P-.4)/.12),mex=sm((P-.78)/.07),pr=sm((P-.42)/.14);gM.visible=me>.01&&mex<.99;
+gM.position.set(4*(1-me),.45+6*mex,-.9);gM.scale.setScalar(lp(.63,.9,me));
+needle.rotation.z=lp(2.2,-1.1,pr)+Math.sin(t*9)*.02*pr;lamp.material.emissiveIntensity=1+.9*Math.sin(t*5);ring.material.emissiveIntensity=.5+1.2*pr*(.6+.4*Math.sin(t*4));
+stUpd(wand,t,sm((P-.46)/.06)*(1-sm((P-.62)/.05)),1.2,.25);
+/* cup + liquid */
+const ca=sm((P-.57)/.07),cs=.9*ca;cup.visible=ca>.01;cup.scale.setScalar(Math.max(cs,.001));
+const lift=sm((P-.8)/.1);cup.position.y=lp(-1.96,-.5,lift)-(1-ca)*1.2;cup.rotation.y=Math.sin(t*.6)*.18*(1-sm((P-.88)/.07));
+const e1=sm((P-.62)/.16),m1=sm((P-.84)/.07);let L=lp(.18,.58,e1);L=lp(L,.98,m1);
+liqM.color.copy(mix(0x1a0b05,0xc79a68,m1));plane.constant=cup.position.y+L*cs;
+const dr=ir(L)*.99;disc.position.y=L+.004;disc.scale.set(dr,dr,1);disc.material.color.copy(mix(0x8c4a20,0xf0cfa0,m1));disc.visible=e1>.01;
+swirl.position.y=L+.008;swirl.scale.set(dr,dr,1);swirl.visible=m1>.01&&P<.97;swirl.material.opacity=sm(m1*3)*(1-sm((m1-.55)/.45))*.9;swirlT.rotation=-t*1.6*(.4+m1);
+men.visible=e1>.01;men.position.y=L;men.scale.set(dr,dr,.6);men.material.color.copy(liqM.color).multiplyScalar(1.5);
+const fa=sm((P-.92)/.06);foam.visible=fa>.01;foam.position.y=1+(1-fa)*.9;foam.material.opacity=fa;const fr=.81*lp(.7,1,fa);foam.scale.set(fr,1,fr);
+logo.visible=P>.94;logo.position.y=foam.position.y+.088;logo.material.opacity=sm((P-.95)/.045);
+decal.material.opacity=sm((P-.93)/.06);
+stUpd(cupSteam,t,fa*sm((P-.96)/.04),1.5,.35);cupSteam.position.y=1.2;
+/* jets */
+const s1=sm((P-.61)/.02)*(1-sm((P-.775)/.02)),s2=sm((P-.83)/.015)*(1-sm((P-.915)/.02)),ey=cup.position.y+L*cs,ok=ca>.5;
+const l1=Math.max(.01,gM.position.y-.6-ey);jets.forEach((m,k)=>{m.visible=s1>.02&&ok;m.scale.set(s1*(1+.1*Math.sin(t*25+k*2)),l1,s1);m.position.set(k?.12:-.12,ey+l1/2,0)});
+const l2=Math.max(.01,3.8-ey);milk.visible=s2>.02&&ok;milk.scale.set(s2*(1+.12*Math.sin(t*30)),l2,s2);milk.position.set(0,ey+l2/2,0);
+const act=Math.max(s1,s2);rips.forEach((r,k)=>{const rp=(t*1.1+k*.5)%1;r.visible=act>.1&&ok;r.position.y=L+.012;const z=ir(L)*(.1+.65*rp);r.scale.set(z,z,1);r.material.opacity=act*.35*(1-rp)});
+const bu=bub.userData;bub.visible=s1>.1&&ok;bub.position.y=L+.012;for(let i=0;i<bu.n;i++){const a=i*2.4+t*.3,r=.12+.28*((t*.4+i*.37)%1);bu.a[i*3]=Math.cos(a)*r;bu.a[i*3+1]=0;bu.a[i*3+2]=Math.sin(a)*r}bu.g.attributes.position.needsUpdate=true;bub.material.opacity=.85*s1;
+/* camera */
+yu*=drag?1:Math.exp(-dt*1.5);pu*=drag?1:Math.exp(-dt*1.5);
+const sf=sm((P-.86)/.14),el=lp(.1,.55,sf)+pu+vel*.8,yw=yu+Math.sin(t*.4)*.04,ty=lp(0,-.15,sf);
+cam.position.set(Math.sin(yw)*Math.cos(el)*dist,ty+Math.sin(el)*dist,Math.cos(yw)*Math.cos(el)*dist);cam.lookAt(0,ty,0);
+R.render(S,cam);
+const si=Math.min(4,Math.floor(P*5));if(si!==cur)setStage(si);
+$('#pg').style.width=P*100+'%';$('#hint').style.display=P<.03?'block':'none';
+const fin=P>.93;$('#card').classList.toggle('show',fin);$('#cap').classList.toggle('hide',fin);}
+requestAnimationFrame(frame);
+</script></body></html>
